@@ -4,6 +4,7 @@ public class ARPanel : UIPanel
 
     public override void Show()
     {
+        ServiceLocator.Instance.EnableAR();
         gameObject.SetActive(true);
     }
 
@@ -14,6 +15,6 @@ public class ARPanel : UIPanel
 
     public override void Initialize()
     {
-        
+
     }
 }
