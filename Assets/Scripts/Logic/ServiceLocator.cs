@@ -11,6 +11,7 @@ public class ServiceLocator : MonoBehaviour
     [field: SerializeField] public ARSession ARSession { get; private set; }
     [field: SerializeField] public ARPlaneManager ARPlaneManager { get; private set; }
     [field: SerializeField] public ARRaycastManager ARRaycastManager { get; private set; }
+    [field: SerializeField] public ARPlacementManager ARPlacementManager { get; private set; }
 
     private void Awake()
     {

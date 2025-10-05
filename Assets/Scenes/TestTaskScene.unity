@@ -881,6 +881,7 @@ GameObject:
   - component: {fileID: 499515589}
   - component: {fileID: 499515591}
   - component: {fileID: 499515590}
+  - component: {fileID: 499515592}
   m_Layer: 0
   m_Name: ARSession
   m_TagString: Untagged
@@ -930,6 +931,18 @@ MonoBehaviour:
   m_AttemptUpdate: 1
   m_MatchFrameRate: 1
   m_TrackingMode: 2
+--- !u!114 &499515592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499515588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e0fd980fe29a164a84b74ffb471e125, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &507151423
 GameObject:
   m_ObjectHideFlags: 0
@@ -1571,6 +1584,7 @@ MonoBehaviour:
   <ARSession>k__BackingField: {fileID: 499515591}
   <ARPlaneManager>k__BackingField: {fileID: 647387622}
   <ARRaycastManager>k__BackingField: {fileID: 647387621}
+  <ARPlacementManager>k__BackingField: {fileID: 499515592}
 --- !u!1 &1389475582
 GameObject:
   m_ObjectHideFlags: 0

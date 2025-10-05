@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
 
 public class ARPanel : UIPanel
 {
@@ -27,6 +29,7 @@ public class ARPanel : UIPanel
     public override void Initialize()
     {
         ServiceLocator.Instance.ARPlaneManager.trackablesChanged.AddListener(OnPlanesChanged);
+        ServiceLocator.Instance.ARPlacementManager.OnModelPlaced += OnModelPlaced;
     }
 
     private void OnPlanesChanged(ARTrackablesChangedEventArgs<ARPlane> args)
@@ -38,10 +41,16 @@ public class ARPanel : UIPanel
         }
     }
 
+    private void OnModelPlaced()
+    {
+        currentSubState = ARSubState.Placed;
+        UpdateUI();
+    }
+
     private void UpdateUI()
     {
         if (ScanLabel != null) ScanLabel.SetActive(currentSubState == ARSubState.Scanning);
         if (PlaceLabel != null) PlaceLabel.SetActive(currentSubState == ARSubState.ReadyToPlace);
-        // Placed state will hide both
+        // Placed state hides both
     }
 }
