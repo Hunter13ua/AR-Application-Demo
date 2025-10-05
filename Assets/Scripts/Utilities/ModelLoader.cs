@@ -2,6 +2,8 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using GLTFast;
+using GLTFast.Materials;
+
 
 public class ModelLoader : MonoBehaviour
 {
@@ -48,6 +50,26 @@ public class ModelLoader : MonoBehaviour
                     bounds.Encapsulate(renderer.bounds);
                 }
                 ModelSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+                
+                // Add interaction components
+                if (!modelRoot.TryGetComponent<ModelInteraction>(out _))
+                {
+                    modelRoot.AddComponent<ModelInteraction>();
+                }
+                if (!modelRoot.TryGetComponent<Collider>(out _))
+                {
+                    var collider = modelRoot.AddComponent<BoxCollider>();
+                    collider.center = bounds.center - modelRoot.transform.position;
+                    collider.size = bounds.size;
+                }
+
+                // Unfortunately gltFast shader throws errors for me in compiled Android build
+                // And i ran out of time to bother figuring out what's up with that
+                // So let's replace that gltFast shader with default one
+                foreach (var renderer in modelRoot.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                }
 
                 modelRoot.SetActive(false); // Hide the template
                 LoadedModel = modelRoot;
