@@ -4,17 +4,22 @@ using UnityEngine.UI;
 
 public class InitialScreenPanel : UIPanel
 {
+    private enum SubState { Input, Loading, Success }
+
     public override UIStateManager.UIState PanelState => UIStateManager.UIState.InitialScreen;
 
     [field: SerializeField] public TMP_InputField InputField { get; private set; }
     [field: SerializeField] public Button SubmitButton { get; private set; }
     [field: SerializeField] public GameObject LoadingNotif { get; private set; }
+    [field: SerializeField] public Button SuccessButton { get; private set; }
     private GlbUrlValidator urlValidator = new();
+    private SubState currentSubState;
 
     public override void Show()
     {
         gameObject.SetActive(true);
-        ShowLoadingNotif(false);
+        currentSubState = SubState.Input;
+        UpdateUI();
     }
 
     public override void Hide()
@@ -34,6 +39,11 @@ public class InitialScreenPanel : UIPanel
         {
             SubmitButton.onClick.AddListener(Submit);
         }
+
+        if (SuccessButton != null)
+        {
+            SuccessButton.onClick.AddListener(ProceedToAR);
+        }
     }
 
     private void ValidateInput(string text)
@@ -49,19 +59,56 @@ public class InitialScreenPanel : UIPanel
         string url = InputField?.text;
         if (string.IsNullOrEmpty(url) || !urlValidator.IsValid(url)) return;
 
-        ShowLoadingNotif(true);
+        currentSubState = SubState.Loading;
+        UpdateUI();
 
         ServiceLocator.Instance.ModelLoader.LoadModel(
             url,
-            () => ServiceLocator.Instance.UIStateManager.SetState(UIStateManager.UIState.ARScreen),
-            (error) => Debug.Log($"Failed to load model: {error}")
+            OnModelLoaded,
+            OnModelLoadFailed
         );
     }
 
-    private void ShowLoadingNotif(bool value)
+    private void OnModelLoaded()
     {
-        InputField.gameObject.SetActive(!value);
-        SubmitButton.gameObject.SetActive(!value);
-        LoadingNotif.gameObject.SetActive(value);
+        currentSubState = SubState.Success;
+        UpdateUI();
+    }
+
+    private void OnModelLoadFailed(string error)
+    {
+        Debug.Log($"Failed to load model: {error}");
+        currentSubState = SubState.Input;
+        UpdateUI();
+    }
+
+    private void ProceedToAR()
+    {
+        ServiceLocator.Instance.UIStateManager.SetState(UIStateManager.UIState.ARScreen);
+    }
+
+    private void UpdateUI()
+    {
+        switch (currentSubState)
+        {
+            case SubState.Input:
+                InputField.gameObject.SetActive(true);
+                SubmitButton.gameObject.SetActive(true);
+                LoadingNotif.gameObject.SetActive(false);
+                SuccessButton.gameObject.SetActive(false);
+                break;
+            case SubState.Loading:
+                InputField.gameObject.SetActive(false);
+                SubmitButton.gameObject.SetActive(false);
+                LoadingNotif.gameObject.SetActive(true);
+                SuccessButton.gameObject.SetActive(false);
+                break;
+            case SubState.Success:
+                InputField.gameObject.SetActive(false);
+                SubmitButton.gameObject.SetActive(false);
+                LoadingNotif.gameObject.SetActive(false);
+                SuccessButton.gameObject.SetActive(true);
+                break;
+        }
     }
 }

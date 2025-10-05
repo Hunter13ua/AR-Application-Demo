@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using GLTFast;
-using System.Threading;
 
 public class ModelLoader : MonoBehaviour
 {
