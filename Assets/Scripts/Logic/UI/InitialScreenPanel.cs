@@ -84,31 +84,15 @@ public class InitialScreenPanel : UIPanel
 
     private void ProceedToAR()
     {
+        ServiceLocator.Instance.EnableAR();
         ServiceLocator.Instance.UIStateManager.SetState(UIStateManager.UIState.ARScreen);
     }
 
     private void UpdateUI()
     {
-        switch (currentSubState)
-        {
-            case SubState.Input:
-                InputField.gameObject.SetActive(true);
-                SubmitButton.gameObject.SetActive(true);
-                LoadingNotif.gameObject.SetActive(false);
-                SuccessButton.gameObject.SetActive(false);
-                break;
-            case SubState.Loading:
-                InputField.gameObject.SetActive(false);
-                SubmitButton.gameObject.SetActive(false);
-                LoadingNotif.gameObject.SetActive(true);
-                SuccessButton.gameObject.SetActive(false);
-                break;
-            case SubState.Success:
-                InputField.gameObject.SetActive(false);
-                SubmitButton.gameObject.SetActive(false);
-                LoadingNotif.gameObject.SetActive(false);
-                SuccessButton.gameObject.SetActive(true);
-                break;
-        }
+        if (InputField != null) InputField.gameObject.SetActive(currentSubState == SubState.Input);
+        if (SubmitButton != null) SubmitButton.gameObject.SetActive(currentSubState == SubState.Input);
+        if (LoadingNotif != null) LoadingNotif.gameObject.SetActive(currentSubState == SubState.Loading);
+        if (SuccessButton != null) SuccessButton.gameObject.SetActive(currentSubState == SubState.Success);
     }
 }
