@@ -6,6 +6,7 @@ public class ServiceLocator : MonoBehaviour
     private static ServiceLocator instance;
 
     [field: SerializeField] public UIStateManager UIStateManager { get; private set; }
+    [field: SerializeField] public ModelLoader ModelLoader { get; private set; }
 
     private void Awake()
     {
