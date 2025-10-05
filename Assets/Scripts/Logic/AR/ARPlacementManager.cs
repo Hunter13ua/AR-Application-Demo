@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
@@ -10,13 +11,10 @@ public class ARPlacementManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.touchCount > 0)
+        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
         {
-            Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began)
-            {
-                TryPlaceModel(touch.position);
-            }
+            Vector2 touchPosition = Touchscreen.current.primaryTouch.position.ReadValue();
+            TryPlaceModel(touchPosition);
         }
     }
 
