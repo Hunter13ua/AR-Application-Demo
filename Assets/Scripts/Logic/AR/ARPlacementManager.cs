@@ -30,7 +30,9 @@ public class ARPlacementManager : MonoBehaviour
             if (modelPrefab != null)
             {
                 GameObject placedModel = Instantiate(modelPrefab, hitPose.position, hitPose.rotation);
-                placedModel.transform.localScale = Vector3.one * 0.1f; // Adjust scale as needed
+                float targetSize = 0.2f;
+                float scale = targetSize / ServiceLocator.Instance.ModelLoader.ModelSize;
+                placedModel.transform.localScale = Vector3.one * scale;
                 placedModel.SetActive(true);
 
                 OnModelPlaced?.Invoke();

@@ -6,6 +6,7 @@ using GLTFast;
 public class ModelLoader : MonoBehaviour
 {
     public GameObject LoadedModel { get; private set; }
+    public float ModelSize { get; private set; }
     private GltfImport _gltf;
 
     public async void LoadModel(string url, Action onSuccess, Action<string> onError)
@@ -40,6 +41,14 @@ public class ModelLoader : MonoBehaviour
             bool instantiated = await _gltf.InstantiateMainSceneAsync(modelRoot.transform);
             if (instantiated)
             {
+                // Calculate model size
+                Bounds bounds = new Bounds(modelRoot.transform.position, Vector3.zero);
+                foreach (var renderer in modelRoot.GetComponentsInChildren<Renderer>())
+                {
+                    bounds.Encapsulate(renderer.bounds);
+                }
+                ModelSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+
                 modelRoot.SetActive(false); // Hide the template
                 LoadedModel = modelRoot;
             }
