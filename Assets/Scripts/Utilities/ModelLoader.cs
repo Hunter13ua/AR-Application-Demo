@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Networking;
 using GLTFast;
 using GLTFast.Materials;
 
@@ -13,24 +14,41 @@ public class ModelLoader : MonoBehaviour
 
     public async void LoadModel(string url, Action onSuccess, Action<string> onError)
     {
-        try
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
         {
-            _gltf = new GltfImport();
-            bool success = await _gltf.Load(url);
+            var operation = webRequest.SendWebRequest();
 
-            if (success)
+            while (!operation.isDone)
             {
-                await InstantiateTemplateGameObject();
-                onSuccess?.Invoke();
+                await Task.Yield();
+            }
+
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                try
+                {
+                    _gltf = new GltfImport();
+                    bool success = await _gltf.Load(webRequest.downloadHandler.data);
+
+                    if (success)
+                    {
+                        await InstantiateTemplateGameObject();
+                        onSuccess?.Invoke();
+                    }
+                    else
+                    {
+                        onError?.Invoke("GLB parsing failed");
+                    }
+                }
+                catch (Exception e)
+                {
+                    onError?.Invoke($"GLB processing error: {e.Message}");
+                }
             }
             else
             {
-                onError?.Invoke("GLB load failed");
+                onError?.Invoke($"Download failed: {webRequest.error}");
             }
-        }
-        catch (Exception e)
-        {
-            onError?.Invoke(e.Message);
         }
     }
 

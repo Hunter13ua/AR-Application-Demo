@@ -12,6 +12,7 @@ public class InitialScreenPanel : UIPanel
     [field: SerializeField] public Button SubmitButton { get; private set; }
     [field: SerializeField] public GameObject LoadingNotif { get; private set; }
     [field: SerializeField] public Button SuccessButton { get; private set; }
+    [field: SerializeField] public TMP_Text ErrorLabel { get; private set; }
     private GlbUrlValidator urlValidator = new();
     private SubState currentSubState;
 
@@ -77,9 +78,18 @@ public class InitialScreenPanel : UIPanel
 
     private void OnModelLoadFailed(string error)
     {
-        Debug.Log($"Failed to load model: {error}");
         currentSubState = SubState.Input;
         UpdateUI();
+        SetErrorLabel(error);
+    }
+
+    private void SetErrorLabel(string message)
+    {
+        if (ErrorLabel != null)
+        {
+            ErrorLabel.text = message;
+            ErrorLabel.gameObject.SetActive(true);
+        }
     }
 
     private void ProceedToAR()
